@@ -62,11 +62,15 @@ export const SelectButton = styled(ConnectButton)<{
   background-color: ${({ theme, transparent }) =>
     transparent === true ? "transparent" : theme.bg200};
   color: ${({ theme }) => theme.text200};
-  margin: 0rem 1rem 0rem 0rem;
+  margin: 0rem;
   &:hover {
     border: 0.1rem solid ${({ theme }) => theme.bg200};
     color: ${({ theme }) => theme.text200};
   }
+  max-width: 9rem;
+  white-space: nowrap;
+  border-radius: 0.5rem;
+  height: 2.5rem;
 `;
 
 export const MenuButton = styled(BaseButton)`

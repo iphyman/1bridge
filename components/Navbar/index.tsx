@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { ConnectButton, MenuButton } from "components/Button";
-import { NavbarSelectChain } from "components/Dropdowns";
-import { MdOutlineAccountBalanceWallet } from "react-icons/md";
+import { Dropdown } from "components/Dropdowns";
+// import { MdOutlineAccountBalanceWallet } from "react-icons/md";
 import { CgMenuGridR } from "react-icons/cg";
+import { CHAIN_INFO } from "constants/chain-info";
 
 const StyledNav = styled.nav`
   width: 100%;
@@ -38,6 +39,25 @@ const StyledLogo = styled.a`
 `;
 
 export const Navbar = () => {
+  const blockchains: {
+    logo: string;
+    name: string;
+    chainId?: string;
+  }[] = [];
+
+  Object.keys(CHAIN_INFO).map((chainId) => {
+    blockchains.push({
+      logo: CHAIN_INFO[parseInt(chainId)].iconUrls[0],
+      name: CHAIN_INFO[parseInt(chainId)].chainName,
+      chainId: chainId,
+    });
+  });
+
+  const active = {
+    logo: blockchains[0].logo,
+    name: blockchains[0].name,
+  };
+
   return (
     <StyledNav>
       <Container>
@@ -45,11 +65,11 @@ export const Navbar = () => {
           <StyledLogo href="/">1Bridge</StyledLogo>
         </GroupMenuLeft>
         <GroupMenuRight>
-          <NavbarSelectChain />
-          <ConnectButton>
+          {/* <Dropdown items={blockchains} active={active} /> */}
+          {/* <ConnectButton>
             <MdOutlineAccountBalanceWallet size={24} />{" "}
             <span style={{ marginLeft: "0.5rem" }}>Connect Wallet</span>
-          </ConnectButton>
+          </ConnectButton> */}
           <MenuButton>
             <CgMenuGridR size="24" />
           </MenuButton>

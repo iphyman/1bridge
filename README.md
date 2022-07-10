@@ -45,7 +45,7 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-1Bridge is aims to be a simple to use cross chain asset transfer bridge aggregator.
+1Bridge aims to be a simple to use cross chain asset transfer bridge aggregator.
 
 ### Built With
 
@@ -62,14 +62,14 @@ To get started developing the project, you need to have the latest stable node a
 
 1. Clone the repo
    ```sh
-   git clone https://github.com/iphyman/munnyswap.git
+   git clone https://github.com/iphyman/1bridge.git
    ```
 2. Install NPM packages
    ```sh
    yarn
    ```
 3. Create and populate a .env.local file with the required credentials
-4. To server the UI run
+4. To serve the ui run
 
 ```sh
 yarn dev
