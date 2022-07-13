@@ -9,7 +9,7 @@
     <h1>1Bridge</h1>
   </a>
   <p align="center">
-    An opensource cross chain bridge aggregator
+    An opensource cross chain bridge aggregator and cross chain transaction explorer
     <br />
     <!-- <a href="https://cassavaland.io">Live Demo dApp</a> |
     <a href="https://vimeo.com/717736971/0dde70ebd8">Demo video</a> -->

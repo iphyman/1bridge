@@ -70,6 +70,12 @@ export const Navbar = () => {
             <MdOutlineAccountBalanceWallet size={24} />{" "}
             <span style={{ marginLeft: "0.5rem" }}>Connect Wallet</span>
           </ConnectButton> */}
+          <StyledLogo
+            style={{ fontSize: "1rem", fontWeight: 600 }}
+            href="/explorer"
+          >
+            Explorer
+          </StyledLogo>
           <MenuButton>
             <CgMenuGridR size="24" />
           </MenuButton>
