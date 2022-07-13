@@ -45,7 +45,7 @@
 
 <!-- [![Product Name Screen Shot][product-screenshot]](https://example.com) -->
 
-1Bridge aims to be a simple to use cross chain asset transfer bridge aggregator.
+1Bridge is a crosschain bridge aggregator, it acts as a single interface between many blockchain bridges. When you need to make a quick asset transfer to other blockchains but don't know the exact bridge to use, just navigate to [1Bridge.org](https://1bridge.org), fill in your origin, destination blockchains and select the asset you wish to bridge, appropriate bridge providers will be displayed for you to follow through from the provider platform.
 
 ### Built With
 
@@ -79,13 +79,13 @@ yarn dev
 
 To support cross-chain asset transfer through the following providers
 
-- [] Support Nomad
-- [] Support Multichain (AnySwap)
+- [x] Support Nomad
+- [x] Support Multichain (AnySwap)
 - [] Support RelayChain
-- [] Support Connext
+- [x] Support Connext
 - [] Support Satellite
-- [] Support SynapseProtocol
-- [] Support Passport by meter
+- [x] Support SynapseProtocol
+- [x] Support Passport by meter
 
 ## Contributing
 

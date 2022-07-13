@@ -51,6 +51,13 @@ export const CHAIN_INFO: { [chainId: number]: BaseChainInfo } = {
     rpcUrls: ["https://exchainrpc.okex.org"],
     nativeCurrency: { name: "Okex", symbol: "OKT", decimals: 18 },
   },
+  [SupportedChainId.METER_MAINNET]: {
+    blockExplorerUrls: ["https://scan.meter.io"],
+    chainName: "Meter Mainnet",
+    iconUrls: [`/${SupportedChainId.METER_MAINNET}.png`],
+    rpcUrls: ["https://rpc.meter.io"],
+    nativeCurrency: { name: "Meter", symbol: "MTR", decimals: 18 },
+  },
   [SupportedChainId.GNOSIS_CHAIN]: {
     blockExplorerUrls: ["https://blockscout.com/xdai/mainnet"],
     chainName: "Gnosis",

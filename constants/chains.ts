@@ -6,6 +6,7 @@ export enum SupportedChainId {
   SYSCOIN = 57,
   ONTOLOGY = 58,
   OKEX_CHAIN = 66,
+  METER_MAINNET = 82,
   GNOSIS_CHAIN = 100,
   HUOBI_ECO_CHAIN = 128,
   POLYGON_CHAIN = 137,

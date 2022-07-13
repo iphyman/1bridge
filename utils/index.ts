@@ -1,3 +1,4 @@
+import { SupportedChainId } from "../constants/chains";
 import type { Blockchain, Currency } from "types";
 
 export function getTokenFilter<T extends Currency>(
@@ -56,8 +57,45 @@ export const getMultiChainTokens = async (chainId: string) => {
 };
 
 export const getSynapseChainTokens = async (chainId: string) => {
+  const res = await fetch(`/api/synapse?chainId=${chainId}`);
+
+  return res.json();
+};
+
+export const getMeterChainTokens = async (chainId: string) => {
+  const nameMap = () => {
+    switch (parseInt(chainId)) {
+      case SupportedChainId.AVALANCHE_C_CHAIN: {
+        return "avalanche";
+      }
+      case SupportedChainId.BINANCE_SMART_CHAIN: {
+        return "bsc";
+      }
+      case SupportedChainId.MOONBEAM: {
+        return "moonbeam";
+      }
+      case SupportedChainId.MOONRIVER: {
+        return "moonriver";
+      }
+      case SupportedChainId.POLYGON_CHAIN: {
+        return "polygon";
+      }
+      case SupportedChainId.ETHEREUM: {
+        return "ethereum";
+      }
+
+      default: {
+        return null;
+      }
+    }
+  };
+
+  if (!nameMap()) {
+    return null;
+  }
+
   const res = await fetch(
-    `https://syn-api-x.herokuapp.com/v1/get_bridgeable_tokens?chain=${chainId}`
+    `https://raw.githubusercontent.com/meterio/token-list/master/generated/chain-configs/${nameMap()}.json`
   );
 
   return await res.json();

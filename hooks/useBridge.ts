@@ -3,7 +3,11 @@ import shallow from "zustand/shallow";
 import { find, includes } from "lodash";
 import type { Bridge } from "types";
 import { useStore } from "../state";
-import { getMultiChainTokens, getSynapseChainTokens } from "../utils";
+import {
+  getMultiChainTokens,
+  getSynapseChainTokens,
+  getMeterChainTokens,
+} from "../utils";
 
 export const useBridge = () => {
   const [
@@ -58,6 +62,22 @@ export const useBridge = () => {
     [toChain.chainId]
   );
 
+  const isMeterSupported = useCallback(
+    async (chainId: string, symbol: string) => {
+      const data = await getMeterChainTokens(chainId);
+
+      if (!data) return false;
+      const result = find(data, { symbol: symbol });
+
+      if (result) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     const load = async () => {
       const spBridge: Bridge[] = [];
@@ -87,6 +107,16 @@ export const useBridge = () => {
           estimatedArrival: "NA",
         });
       }
+
+      if (await isMeterSupported(fromChain.chainId, fromCurrency.symbol)) {
+        spBridge.push({
+          name: "Meter Passport",
+          logo: "/meterpassport.png",
+          redirectUrl: `https://passport.meter.io`,
+          estimatedArrival: "NA",
+        });
+      }
+
       setSupportedBridge(spBridge);
     };
 
@@ -96,6 +126,7 @@ export const useBridge = () => {
     toChain.chainId,
     isMultiChainSupported,
     isSynapseSupported,
+    isMeterSupported,
     fromCurrency.symbol,
     setSupportedBridge,
   ]);
