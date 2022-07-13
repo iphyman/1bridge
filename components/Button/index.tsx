@@ -108,3 +108,16 @@ export const IconButton = styled(BaseButton)`
     color: ${({ theme }) => darken(0.4, theme.text300)};
   }
 `;
+
+export const SearchButton = styled(BaseButton)`
+  width: 3.75rem;
+  height: 100%;
+  border-radius: 0rem 0.5rem 0.5rem 0rem;
+  background-color: ${({ theme }) => theme.primary100};
+  position: absolute;
+  top: 0rem;
+  right: 0rem;
+  :hover {
+    background-color: ${({ theme }) => darken(0.2, theme.primary100)};
+  }
+`;

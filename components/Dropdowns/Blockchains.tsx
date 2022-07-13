@@ -77,17 +77,18 @@ const StyledInput = styled.input`
   outline: none;
 `;
 
+type Item = {
+  logo: string;
+  name: string;
+  chainId?: string;
+};
 interface DropdownProps {
   hide?: any;
   active?: {
     logo: string;
     name: string;
   };
-  items: {
-    logo: string;
-    name: string;
-    chainId?: string;
-  }[];
+  items: Item[];
   onClick?: (payload: any) => void;
   h?: string;
   placeholder?: string;

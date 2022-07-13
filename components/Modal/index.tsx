@@ -1,10 +1,21 @@
-import { ReactNode, RefObject } from "react";
 import styled, { css } from "styled-components";
-import { animated, useTransition } from "@react-spring/web";
-import { DialogOverlay, DialogContent } from "@reach/dialog";
-import media from "@styles/media";
+import { DialogContent, DialogOverlay } from "@reach/dialog";
+import { animated, useSpring, useTransition } from "@react-spring/web";
+import { useGesture } from "@use-gesture/react";
+import { UAParser } from "ua-parser-js";
+import { transparentize, rgba } from "polished";
+import { ReactNode, RefObject } from "react";
+import media from "styles/media";
 
-const isMobile = false;
+let type: string | undefined;
+
+if (typeof window !== "undefined") {
+  const uaParser = new UAParser(window.navigator.userAgent);
+  const device = uaParser.getDevice();
+  type = device.type;
+}
+
+export const isMobile = type === "mobile" || type === "tablet";
 
 const AnimatedDialogOverlay = animated(DialogOverlay);
 
@@ -15,7 +26,12 @@ const StyledDialogOverlay = styled(AnimatedDialogOverlay)`
     align-items: center;
     justify-content: center;
     padding: 1.5rem 0rem;
-    background-color: rgba(18, 18, 18, 0.8);
+    background-color: ${({ theme }) => rgba(theme.bg200, 0.75)};
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
   }
 `;
 
@@ -29,9 +45,9 @@ const StyledDialogContent = styled(
   overflow-y: auto;
   &[data-reach-dialog-content] {
     margin: 0 0 2rem 0;
-    background-color: ${({ theme }) => theme.bg200};
-    border: 0.1rem solid ${({ theme }) => theme.bg300};
-    box-shadow: 0 0.25rem 0.5rem 0 rgba(0, 0, 0, 0.15);
+    background-color: ${({ theme }) => theme.bg100};
+    border: 0.1rem solid ${({ theme }) => theme.bg200};
+    box-shadow: 0 4px 8px 0 ${({ theme }) => transparentize(0.95, theme.black)};
     padding: 0px;
     width: ${({ width }) => (width ? width : "50vw")};
     overflow-y: auto;
@@ -79,26 +95,44 @@ interface ModalProps {
   children?: ReactNode;
 }
 
-export const Modal = (props: ModalProps) => {
-  const {
-    isOpen,
-    children,
-    onDismiss,
-    minHeight,
-    maxHeight,
-    width,
-    initialFocusRef,
-  } = props;
+export const Modal = ({
+  isOpen,
+  onDismiss,
+  minHeight,
+  maxHeight = 60,
+  width,
+  initialFocusRef,
+  children,
+}: ModalProps) => {
+  const fadeTransition = useTransition(isOpen, {
+    config: { duration: 200 },
+    from: { opacity: 0 },
+    enter: { opacity: 1 },
+    leave: { opacity: 0 },
+  });
 
-  const transitions = useTransition(isOpen, {
-    from: { opacity: 0, y: -10 },
-    enter: { opacity: 1, y: 0 },
-    leave: { opacity: 0, y: 10 },
+  const [{ y }, set] = useSpring(() => ({
+    y: 0,
+    config: { mass: 1, tension: 210, friction: 20 },
+  }));
+
+  const bind = useGesture({
+    onDrag: (state) => {
+      set({
+        y: state.down ? state.movement[1] : 0,
+      });
+      if (
+        state.movement[1] > 300 ||
+        (state.velocity[1] > 3 && state.direction[1] > 0)
+      ) {
+        onDismiss();
+      }
+    },
   });
 
   return (
     <>
-      {transitions(
+      {fadeTransition(
         (styles, item) =>
           item && (
             <StyledDialogOverlay
@@ -108,6 +142,16 @@ export const Modal = (props: ModalProps) => {
               unstable_lockFocusAcrossFrames={false}
             >
               <StyledDialogContent
+                {...(isMobile
+                  ? {
+                      ...() => bind,
+                      style: {
+                        transform: y.to(
+                          (y) => `translateY(${(y as number) > 0 ? y : 0}px)`
+                        ),
+                      },
+                    }
+                  : {})}
                 aria-label="dialog content"
                 minHeight={minHeight}
                 maxHeight={maxHeight}

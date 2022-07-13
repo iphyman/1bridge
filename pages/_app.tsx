@@ -1,10 +1,17 @@
 import type { AppProps } from "next/app";
 import Head from "next/head";
-import { Web3ReactProvider } from "@web3-react/core";
-import { ThemeProvider } from "@contexts/theme";
-import { connectors } from "@connectors";
-import { GlobalStyle } from "@styles/globalStyle";
-import { Navbar } from "@components/Navbar";
+import dynamic from "next/dynamic";
+import { ThemeProvider } from "contexts/theme";
+import { GlobalStyle } from "styles/globalStyle";
+import { Navbar } from "components/Navbar";
+
+const CurrencyModal = dynamic(() => import("components/CurrencyModal"), {
+  ssr: false,
+});
+
+const BlockchainModal = dynamic(() => import("components/BlockchainModal"), {
+  ssr: false,
+});
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -15,13 +22,13 @@ function MyApp({ Component, pageProps }: AppProps) {
           Chain, Ethereum, MoonBeam, MoonRiver, Fantom, Gnosis
         </title>
       </Head>
-      <Web3ReactProvider connectors={connectors}>
-        <ThemeProvider>
-          <GlobalStyle />
-          <Navbar />
-          <Component {...pageProps} />
-        </ThemeProvider>
-      </Web3ReactProvider>
+      <ThemeProvider>
+        <GlobalStyle />
+        <Navbar />
+        <Component {...pageProps} />
+        <CurrencyModal />
+        <BlockchainModal />
+      </ThemeProvider>
     </>
   );
 }

@@ -1,27 +1,27 @@
 import create from "zustand";
 import { CHAIN_INFO } from "constants/chain-info";
+import type { Currency, Blockchain, Bridge } from "types";
 
-type Blockchain = {
-  logo: string;
-  name: string;
-  chainId: string;
-};
+export enum ModalView {
+  Currency,
+  Fromchain,
+  ToChain,
+}
 
-type Currency = {
-  logo: string;
-  name: string;
-};
+type ApplicationModal = ModalView | null;
 
 interface State {
+  activeModal: ApplicationModal;
+  supportedBridge: Bridge[];
   blockchains: Blockchain[];
   fromChain: Blockchain;
   toChain: Blockchain;
   currency: Currency;
-  currencies: Currency[];
+  setActiveModal: (activeModal: ApplicationModal) => void;
+  setSupportedBridge: (supportedBridge: Bridge[]) => void;
   setFromChain: (fromChain: Blockchain) => void;
   setToChain: (toChain: Blockchain) => void;
   setCurrency: (currency: Currency) => void;
-  setCurrencies: (currencies: Currency[]) => void;
 }
 
 const blockchains: Blockchain[] = [];
@@ -48,17 +48,20 @@ const defaultToChain = {
 
 const defaultCurrency = {
   logo: "https://assets.coingecko.com/coins/images/6319/large/USD_Coin_icon.png",
-  name: "USDC",
+  symbol: "USDC",
+  name: "USD coin",
 };
 
 export const useStore = create<State>((set) => ({
+  activeModal: null,
+  supportedBridge: [],
   blockchains: blockchains,
   fromChain: defaultFromChain,
   toChain: defaultToChain,
   currency: defaultCurrency,
-  currencies: [defaultCurrency],
+  setActiveModal: (activeModal) => set({ activeModal }),
+  setSupportedBridge: (supportedBridge) => set({ supportedBridge }),
   setFromChain: (fromChain) => set({ fromChain }),
   setToChain: (toChain) => set({ toChain }),
   setCurrency: (currency) => set({ currency }),
-  setCurrencies: (currencies) => set({ currencies }),
 }));

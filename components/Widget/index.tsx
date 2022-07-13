@@ -1,16 +1,14 @@
 import styled from "styled-components";
 import shallow from "zustand/shallow";
 import Image from "next/image";
-import {
-  FaChevronDown,
-  FaCog,
-  FaArrowDown,
-  FaArrowRight,
-} from "react-icons/fa";
+import { FaCog, FaArrowRight, FaChevronDown } from "react-icons/fa";
 import { BiLinkExternal } from "react-icons/bi";
-import { SelectButton, IconButton } from "components/Button";
-import { Dropdown } from "components/Dropdowns";
+import { IconButton, SelectButton } from "components/Button";
 import { useStore } from "state";
+import type { Bridge } from "types";
+import { useModal } from "hooks/useModal";
+import { useBridge } from "hooks/useBridge";
+import { BlockchainName, Column, Text } from "styles/styleds";
 import { Card, CardBody, CardHeader, TextLabel } from "styles/home";
 
 const FullWidth = styled.div`
@@ -103,19 +101,9 @@ const ListItem = styled.a`
 
 const ListImage = styled.div`
   position: relative;
-  margin-right: 1rem;
+  margin-right: 0.5rem;
   width: 3rem;
   height: 3rem;
-`;
-
-const StyledSelectBtn = styled(SelectButton)`
-  border-width: 0rem;
-  height: 100%;
-  margin-right: 0rem;
-  :hover {
-    border-width: 0rem;
-    background-color: ${({ theme }) => theme.bg200};
-  }
 `;
 
 const ImageBox = styled.div`
@@ -127,44 +115,74 @@ const ImageBox = styled.div`
 
 const StyledDiv = styled.div``;
 
-const ShowBridges = () => {
+const BridgeName = styled(BlockchainName)`
+  color: ${({ theme }) => theme.text300};
+  font-weight: 600;
+  width: auto;
+`;
+
+const BridgeTime = styled(BlockchainName)`
+  font-size: 0.75rem;
+  width: auto;
+`;
+
+interface ShowBridgeProps {
+  bridges: Bridge[];
+}
+
+const ShowBridges = (props: ShowBridgeProps) => {
+  const { bridges } = props;
+
   return (
     <ListItems>
-      <ListItem href="/">
-        <Flex>
-          <ListImage>
-            <Image src="/connext.png" layout="fill" alt="logo" />
-          </ListImage>
-        </Flex>
-        <BiLinkExternal size={24} />
-      </ListItem>
+      {bridges && bridges.length > 0 ? (
+        bridges.map((bridge, index) => {
+          return (
+            <ListItem href={bridge.redirectUrl} key={index}>
+              <Flex>
+                <ListImage>
+                  <Image src={bridge.logo} layout="fill" alt={bridge.name} />
+                </ListImage>
+                <StyledDiv>
+                  <BridgeName>{bridge.name}</BridgeName>
+                  <BridgeTime>
+                    Takes about {bridge.name === "Connext" && "10 Minutes"}
+                  </BridgeTime>
+                </StyledDiv>
+              </Flex>
+              <BiLinkExternal size={24} />
+            </ListItem>
+          );
+        })
+      ) : (
+        <Column style={{ padding: "1.25rem", height: "100%" }}>
+          <Text
+            color="text300"
+            style={{ textAlign: "center", marginBottom: "1.25rem" }}
+          >
+            No Compatible bridge found
+          </Text>
+        </Column>
+      )}
     </ListItems>
   );
 };
 
 export const Widget = () => {
-  const [
-    blockchains,
-    fromChain,
-    setFromChain,
-    currencies,
-    currency,
-    setCurrency,
-    toChain,
-    setToChain,
-  ] = useStore(
+  const [fromChain, currency, toChain, supportedBridges] = useStore(
     (state) => [
-      state.blockchains,
       state.fromChain,
-      state.setFromChain,
-      state.currencies,
       state.currency,
-      state.setCurrency,
       state.toChain,
-      state.setToChain,
+      state.supportedBridge,
     ],
     shallow
   );
+
+  const { toggleCurrencyModal, toggleFromChainModal, toggleToChainModal } =
+    useModal();
+
+  useBridge();
 
   return (
     <Card>
@@ -184,40 +202,63 @@ export const Widget = () => {
             <ImageBox>
               <Image layout="fill" alt={fromChain.name} src={fromChain.logo} />
             </ImageBox>
-            <Dropdown
-              items={blockchains}
-              active={fromChain}
-              onClick={setFromChain}
-              placeholder="Search network name"
-            />
+            <SelectButton
+              style={{ height: "2.5rem" }}
+              onClick={toggleFromChainModal}
+            >
+              <Image
+                src={fromChain.logo}
+                width="24"
+                height="24"
+                alt={fromChain.name}
+                objectFit="cover"
+              />
+              <BlockchainName>{fromChain.name}</BlockchainName>
+              <FaChevronDown />
+            </SelectButton>
           </StyledDiv>
           <StyledDiv>
             <ToLabel>To Chain</ToLabel>
             <ImageBox>
               <Image layout="fill" alt={toChain.name} src={toChain.logo} />
             </ImageBox>
-            <Dropdown
-              items={blockchains}
-              active={toChain}
-              onClick={setToChain}
-              placeholder="Search network name"
-            />
+            <SelectButton
+              style={{ height: "2.5rem" }}
+              onClick={toggleToChainModal}
+            >
+              <Image
+                src={toChain.logo}
+                width="24"
+                height="24"
+                alt={toChain.name}
+                objectFit="cover"
+              />
+              <BlockchainName>{toChain.name}</BlockchainName>
+              <FaChevronDown />
+            </SelectButton>
           </StyledDiv>
         </WidgetContainer>
         <WidgetContainer>
           <FromLabel>Token to Bridge</FromLabel>
           <InputWrapper>
-            <Dropdown
-              items={currencies}
-              active={currency}
-              onClick={setCurrency}
-              h="4rem"
-              placeholder="Search currency name or symbol"
-            />
+            <SelectButton
+              style={{ height: "4rem", borderRadius: "1rem" }}
+              onClick={toggleCurrencyModal}
+            >
+              <Image
+                src={currency.logo}
+                width="24"
+                height="24"
+                alt={currency.name}
+                objectFit="cover"
+              />
+              <BlockchainName>{currency.name}</BlockchainName>
+              <FaChevronDown />
+            </SelectButton>
             <StyledInput placeholder="0.00" />
           </InputWrapper>
         </WidgetContainer>
-        <ShowBridges />
+        <ShowBridges bridges={supportedBridges} />
       </CardBody>
     </Card>
   );

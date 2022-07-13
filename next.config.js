@@ -5,7 +5,7 @@ const nextConfig = {
     styledComponents: true
   },
   images: {
-    domains: ['assets.coingecko.com'],
+    domains: ['assets.coingecko.com', 'www.dropbox.com', 'raw.githubusercontent.com'],
   },
 }
 
