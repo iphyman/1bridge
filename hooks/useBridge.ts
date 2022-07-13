@@ -3,7 +3,7 @@ import shallow from "zustand/shallow";
 import { find, includes } from "lodash";
 import type { Bridge } from "types";
 import { useStore } from "../state";
-import { getMultiChainTokens } from "../utils";
+import { getMultiChainTokens, getSynapseChainTokens } from "../utils";
 
 export const useBridge = () => {
   const [
@@ -41,25 +41,61 @@ export const useBridge = () => {
     [toChain.chainId]
   );
 
+  const isSynapseSupported = useCallback(
+    async (chainId: string, symbol: string) => {
+      const data = await getSynapseChainTokens(chainId);
+
+      if (!data) return false;
+      const result = find(data, { symbol: symbol });
+
+      if (result) {
+        const destChains = Object.keys(result.addresses);
+        return includes(destChains, toChain.chainId);
+      } else {
+        return false;
+      }
+    },
+    [toChain.chainId]
+  );
+
   useEffect(() => {
     const load = async () => {
       const spBridge: Bridge[] = [];
 
       if (await isMultiChainSupported(fromChain.chainId, fromCurrency.symbol)) {
-        spBridge.push({
-          name: "Connext",
-          logo: "/connext.png",
-          redirectUrl: `https://bridge.connext.network/?sendingChainId=${fromChain.chainId}`,
-        });
+        spBridge.push(
+          {
+            name: "Connext",
+            logo: "/connext.png",
+            redirectUrl: `https://bridge.connext.network/?sendingChainId=${fromChain.chainId}&receivingChainId=${toChain.chainId}`,
+            estimatedArrival: "",
+          },
+          {
+            name: "Multichain",
+            logo: "/multichain.png",
+            redirectUrl: `https://app.multichain.org/#/router`,
+            estimatedArrival: "10-30 minutes",
+          }
+        );
       }
 
+      if (await isSynapseSupported(fromChain.chainId, fromCurrency.symbol)) {
+        spBridge.push({
+          name: "Synapse",
+          logo: "/synapse.png",
+          redirectUrl: `https://synapseprotocol.com/?inputCurrency=${fromCurrency.symbol}&inputChain=${fromChain.chainId}&outputChain=${toChain.chainId}`,
+          estimatedArrival: "NA",
+        });
+      }
       setSupportedBridge(spBridge);
     };
 
     load();
   }, [
     fromChain.chainId,
+    toChain.chainId,
     isMultiChainSupported,
+    isSynapseSupported,
     fromCurrency.symbol,
     setSupportedBridge,
   ]);

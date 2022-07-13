@@ -138,7 +138,7 @@ const ShowBridges = (props: ShowBridgeProps) => {
       {bridges && bridges.length > 0 ? (
         bridges.map((bridge, index) => {
           return (
-            <ListItem href={bridge.redirectUrl} key={index}>
+            <ListItem href={bridge.redirectUrl} target="_blank" key={index}>
               <Flex>
                 <ListImage>
                   <Image src={bridge.logo} layout="fill" alt={bridge.name} />
@@ -146,7 +146,7 @@ const ShowBridges = (props: ShowBridgeProps) => {
                 <StyledDiv>
                   <BridgeName>{bridge.name}</BridgeName>
                   <BridgeTime>
-                    Takes about {bridge.name === "Connext" && "10 Minutes"}
+                    Estimated Arrival {bridge.estimatedArrival}
                   </BridgeTime>
                 </StyledDiv>
               </Flex>

@@ -54,3 +54,11 @@ export const getMultiChainTokens = async (chainId: string) => {
 
   return await res.json();
 };
+
+export const getSynapseChainTokens = async (chainId: string) => {
+  const res = await fetch(
+    `https://syn-api-x.herokuapp.com/v1/get_bridgeable_tokens?chain=${chainId}`
+  );
+
+  return await res.json();
+};

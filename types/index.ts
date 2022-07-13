@@ -26,4 +26,5 @@ export type Bridge = {
   name: string;
   logo: string;
   redirectUrl: string;
+  estimatedArrival?: string;
 };
